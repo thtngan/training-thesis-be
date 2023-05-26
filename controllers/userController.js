@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 exports.getAll = (req, res) => {
     User.find()
         .then((users) => {
-            console.log(users);
             return res.status(200).json({
                 success: true,
                 message: 'List all users',
@@ -104,32 +103,40 @@ exports.getUserByUsername = (req, res) => {
   
 // Update user by username
 exports.updateUserByUsername = (req, res) => {
-    const { username } = req.params;
-    const updatedUser = req.body;
+    const username = req.params.id;
+    const { fullname, password, tracking } = req.body;
   
-    User.findOneAndUpdate({ username }, updatedUser, { new: true })
-      .then((user) => {
-        if (!user) {
-          return res.status(404).json({
-            success: false,
-            message: 'User not found',
+    console.log(username);
+
+    User.findOneAndUpdate(
+        { username }, // Filter condition
+        { fullname, password, tracking }, // Updated fields
+        { new: true } // Return the updated document
+      )
+        .then((updatedUser) => {
+            console.log(updatedUser);
+
+          if (!updatedUser) {
+            return res.status(404).json({
+              success: false,
+              message: 'User not found',
+            });
+          }
+    
+          return res.status(200).json({
+            success: true,
+            message: 'User updated successfully',
+            user: updatedUser,
           });
-        }
-  
-        return res.status(200).json({
-          success: true,
-          message: 'User updated successfully',
-          user,
+        })
+        .catch((err) => {
+          console.error(err);
+          return res.status(500).json({
+            success: false,
+            message: 'Server error. Please try again',
+            error: err.message,
+          });
         });
-      })
-      .catch((err) => {
-        console.error(err);
-        return res.status(500).json({
-          success: false,
-          message: 'Server error. Please try again',
-          error: err.message,
-        });
-      });
 };
   
 // Authenticate user
