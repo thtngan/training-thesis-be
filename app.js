@@ -1,5 +1,6 @@
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -7,12 +8,13 @@ var bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const ejs = require('ejs');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var indexRouter = require('./routes/index.routes');
+var usersRouter = require('./routes/users.routes');
 
 var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,13 +26,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect("mongodb+srv://ththaongan1303:c2NcH4irOoO67CtH@cluster0.fb3nxnz.mongodb.net/Thesis?retryWrites=true&w=majority",
-  {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-  })
-  .then(() => console.log('Connected Successfully'))
-  .catch((err) => { 'Connected failed' + console.error(err); });
+require('./utils/connectDB')();
 
 app.use('/', indexRouter);
 app.use('/user', usersRouter);

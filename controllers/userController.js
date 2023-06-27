@@ -1,4 +1,4 @@
-var User = require('../models/userModel')
+var User = require('../models/user.models')
 const bcrypt = require('bcrypt');
 
 // List all users
@@ -46,7 +46,7 @@ exports.createUser = (req, res) => {
         newUser.save()
             .then((user) => {
             console.log(user);
-            return res.status(201).json({
+            return res.status(200).json({
                 success: true,
                 message: 'User created successfully',
                 user,
