@@ -15,6 +15,12 @@ var app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+//allow fe
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true, // if you are sending cookies
+}));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,7 +35,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 require('./utils/connectDB')();
 
 app.use('/', indexRouter);
-app.use('/user', usersRouter);
+app.use('/auth', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

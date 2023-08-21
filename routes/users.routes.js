@@ -13,13 +13,11 @@ var corsOptions = {
 
 /* GET list  */
 router.route('/list').get(userController.getAll)
-router.route('/:id').get(userController.getUserByUsername)
-router.route('/login').post(userController.authenticateUser)
+
+/* SIGN IN user */
+router.route('/signin').post(userController.authenticateUser)
 
 /* CREATE user */
 router.route('/signup').post(cors(corsOptions), userController.createUser)
-
-/* UPDATE user */
-router.route('/update/:id').put(userController.updateUserByUsername)
 
 module.exports = router;

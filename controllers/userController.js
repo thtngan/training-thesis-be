@@ -22,22 +22,21 @@ exports.getAll = (req, res) => {
 
 // Create user
 exports.createUser = (req, res) => {
-    const { username, fullname, email, password, tracking } = req.body;
+    const { username, email, password, tracking } = req.body;
 
     // Check if the email already exists in the database
-    User.findOne({ $or: [{ username }, { email }] })
+    User.findOne({ $or: [{ email }] })
         .then((existingUser) => {
         if (existingUser) {
             return res.status(409).json({
             success: false,
-            message: 'Username or email already exists',
+            message: 'Email already exists',
             });
         }
 
         // Create a new user
         const newUser = new User({
             username,
-            fullname,
             email,
             password,
             tracking,
@@ -71,79 +70,12 @@ exports.createUser = (req, res) => {
       });
     });
 };
-
-// Get user by username
-exports.getUserByUsername = (req, res) => {
-    const username = req.params.id;
-
-    User.findOne({ username })
-        .then((user) => {
-        if (!user) {
-            return res.status(404).json({
-            success: false,
-            message: 'User not found',
-            });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: 'User found',
-            user,
-        });
-        })
-        .catch((err) => {
-        console.error(err);
-        return res.status(500).json({
-            success: false,
-            message: 'Server error. Please try again',
-            error: err.message,
-        });
-        });
-};
-  
-// Update user by username
-exports.updateUserByUsername = (req, res) => {
-    const username = req.params.id;
-    const { fullname, password, tracking } = req.body;
-  
-    console.log(username);
-
-    User.findOneAndUpdate(
-        { username }, // Filter condition
-        { fullname, password, tracking }, // Updated fields
-        { new: true } // Return the updated document
-      )
-        .then((updatedUser) => {
-            console.log(updatedUser);
-
-          if (!updatedUser) {
-            return res.status(404).json({
-              success: false,
-              message: 'User not found',
-            });
-          }
-    
-          return res.status(200).json({
-            success: true,
-            message: 'User updated successfully',
-            user: updatedUser,
-          });
-        })
-        .catch((err) => {
-          console.error(err);
-          return res.status(500).json({
-            success: false,
-            message: 'Server error. Please try again',
-            error: err.message,
-          });
-        });
-};
   
 // Authenticate user
 exports.authenticateUser = (req, res) => {
-    const { username, password } = req.body;
+    const { email, password } = req.body;
   
-    User.findOne({ username })
+    User.findOne({ email })
       .then((user) => {
         if (!user) {
           return res.status(404).json({
